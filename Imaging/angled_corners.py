@@ -1,6 +1,5 @@
 import numpy
 import numpy.ndarray.item
-import cv2
 import math
 
 
@@ -23,3 +22,26 @@ def ArrayAnalyzer(Corner_Array):
     Corner_Angle3 = (AngleCheck(Corner_Array.item(2), Corner_Array.item(3)))
     Corner_Angle4 = (AngleCheck(Corner_Array.item(6), Corner_Array.item(7)))
     return (Corner_Angle1, Corner_Angle2, Corner_Angle3, Corner_Angle4)
+
+
+def TurnState(Analyzed_Angles):
+    # determines how to turn based off of given angles)
+    angle_total = 0
+    angle_num = 0
+    for angle in Analyzed_Angles:
+        angle_total += angle
+        angle_num += 1
+    compiled_angle = angle_total/angle_num
+    if abs(compiled_angle) >= 85 and abs(compiled_angle):
+        return 0
+    else:
+        if compiled_angle >= 0:
+            if abs(compiled_angle) >= 90:
+                return 1
+            if abs(compiled_angle) < 90:
+                return -1
+        if compiled_angle < 0:
+            if abs(compiled_angle) >= 90:
+                return -1
+            if abs(compiled_angle) < 90:
+                return 1
