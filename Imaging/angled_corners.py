@@ -54,11 +54,11 @@ def TurnState(Analyzed_Angles):
     else:
         if compiled_angle >= 0:
             if abs(compiled_angle) >= 90:
-                return 1
-            if abs(compiled_angle) < 90:
                 return -1
+            if abs(compiled_angle) < 90:
+                return 1
         if compiled_angle < 0:
             if abs(compiled_angle) >= 90:
-                return -1
-            if abs(compiled_angle) < 90:
                 return 1
+            if abs(compiled_angle) < 90:
+                return -1
