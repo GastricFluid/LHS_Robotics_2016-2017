@@ -19,7 +19,7 @@ def Main():
             break
         given_corners = CornerInput()
         angle = AngleOut(given_corners)
-        ser.write(angle)
+        ser.write(str(angle))
         print angle
     ser.close()
 
