@@ -58,3 +58,14 @@ def TurnState(Analyzed_Angles):
                 return 1
             if abs(compiled_angle) < 90:
                 return -1
+
+
+def CompiledAnglePure(Analzed_Angles):
+    # like TrunState() but just returns the compiled angle rather than finding direction
+    angle_total = 0
+    angle_num = 0
+    for angle in Analzed_Angles:
+        angle_total += angle
+        angle_num += 1
+    compiled_angle = angle_total/angle_num
+    return compiled_angle
