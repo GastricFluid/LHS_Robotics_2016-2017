@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import calibrate
 import line
+##import angled_corners
 
 img = cv2.imread('test1.jpg')
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -15,11 +16,14 @@ lines = cv2.HoughLinesP(edges, 1, np.pi/180, 127, minLineLength, maxLineGap)
 print lines
 
 print 'corners:'
-print line.corners(lines)
+print line.finalcorners()
 calculatedPixels = line.length(line.midpt(lines[0][0]),line.midpt(lines[2][0]))
 print calculatedPixels
 print line.length(line.midpt(lines[2][0]),line.midpt(lines[3][0]))
 print line.length(line.midpt(lines[2][0]),line.midpt(lines[1][0]))
+
+
+
 
 focal = calibrate.determineFocal(24, 2, calculatedPixels)
 print focal    
@@ -27,7 +31,7 @@ print focal
 distance = calibrate.calculateDistance(focal, 2, calculatedPixels)
 print distance
 
-cv2.imshow("edges", img)
-cv2.imshow("lines", im_bw)
+##cv2.imshow("edges", img)
+##cv2.imshow("lines", im_bw)
 cv2.waitKey()
 cv2.destroyAllWindows()
