@@ -13,8 +13,7 @@ def AngleOut(CornerArray):
 
 
 def Main():
-    ser = serial.Serial('/dev/ttyAMAO', 9600, timeout=0)
-    ser.open()
+    ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0)
     while True:
         if raw_input():
             break
@@ -22,7 +21,7 @@ def Main():
         angle = AngleOut(given_corners)
         ser.write(angle)
         print angle
-    ser.__del__()
+    ser.close()
 
 
 if __name__ == '__main__':
