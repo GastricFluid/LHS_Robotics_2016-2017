@@ -12,4 +12,11 @@ public class MotorController{
 	private Joystick jStick = new Joystick(0);
 	
 	private final double UpdatePeriod = 0.005;
+	public Robot() {
+	}
+	@Override
+	public void operatorControl() {
+		while (isOperatorControl() && isEnabled()) {
+			motor.set(stick.getY());
+			Timer.delay(UpdatePeriod);
 }
