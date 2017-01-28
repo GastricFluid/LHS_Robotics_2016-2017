@@ -5,7 +5,22 @@ import cv2
 
 def corners(lines):
     
-    cornerarray=np.array([[lines[2][0][0],lines[2][0][1]],[lines[0][0][0],lines[0][0][1]],[lines[3][0][0],lines[3][0][1]],[lines[1][0][0],lines[1][0][1]],[lines[2][0][2],lines[2][0][2]],[lines[0][0][2],lines[0][0][3]],[lines[3][0][2],lines[3][0][3]],[lines[1][0][2],lines[1][0][3]]])
+    cornerarray=np.ndarray([[lines[2][0][0],
+                           lines[2][0][1]],
+                          [lines[0][0][0],
+                           lines[0][0][1]],
+                          [lines[3][0][0],
+                           lines[3][0][1]],
+                          [lines[1][0][0],
+                           lines[1][0][1]],
+                          [lines[2][0][2],
+                           lines[2][0][3]],
+                          [lines[0][0][2],
+                           lines[0][0][3]],
+                          [lines[3][0][2],
+                           lines[3][0][3]],
+                          [lines[1][0][2],
+                           lines[1][0][3]]])
                           
     return cornerarray
     
