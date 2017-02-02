@@ -1,8 +1,20 @@
+from operator import itemgetter
+import math
 import numpy as np
+import cv2
 import Camera
 
 def corners(lines):
-    cornerarray=np.array([[lines[2][0][0],lines[2][0][1]],[lines[0][0][0],lines[0][0][1]],[lines[3][0][0],lines[3][0][1]],[lines[1][0][0],lines[1][0][1]],[lines[2][0][2],lines[2][0][3]],[lines[0][0][2],lines[0][0][3]],[lines[3][0][2],lines[3][0][3]],[lines[1][0][2],lines[1][0][3]]])                        
+    
+    cornerarray=np.array([[lines[2][0][0],lines[2][0][1]],
+                          [lines[0][0][0],lines[0][0][1]],
+                          [lines[3][0][0],lines[3][0][1]],
+                          [lines[1][0][0],lines[1][0][1]],
+                          [lines[2][0][2],lines[2][0][3]],
+                          [lines[0][0][2],lines[0][0][3]],
+                          [lines[3][0][2],lines[3][0][3]],
+                          [lines[1][0][2],lines[1][0][3]]])
+                          
     return cornerarray
     
 ##    i=0
@@ -27,7 +39,10 @@ def corners(lines):
 
 
 
-def finalcorners():  
+def finalcorners():
+    Camera.init()
+    
     lines = Camera.getLines()
     return corners(lines)
 
+finalcorners()
