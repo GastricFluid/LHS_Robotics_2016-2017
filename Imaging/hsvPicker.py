@@ -17,8 +17,10 @@ cv2.createTrackbar('Hue High','image',0,255,nothing)
 cv2.createTrackbar('Sat High','image',0,255,nothing)
 cv2.createTrackbar('Value High','image',0,255,nothing)
 
-img = Camera.grabPicture()
-img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+img = None
+while img is None:
+    img = Camera.grabPicture()
+    img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
 while(1):
     k = cv2.waitKey(1) & 0xFF
