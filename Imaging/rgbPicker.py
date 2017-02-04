@@ -17,7 +17,9 @@ cv2.createTrackbar('Red High','image',0,255,nothing)
 cv2.createTrackbar('Green High','image',0,255,nothing)
 cv2.createTrackbar('Blue High','image',0,255,nothing)
 
-img = Camera.grabPicture()
+img = None
+while img is None:
+    img = Camera.grabPicture()
 
 while(1):
     k = cv2.waitKey(1) & 0xFF
