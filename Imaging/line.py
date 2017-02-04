@@ -5,6 +5,7 @@ import cv2
 import Camera
 
 def corners(lines):
+    print lines
     if lines == None or lines[0] == None:
         return None
     elif len(lines[0]) == 1:
