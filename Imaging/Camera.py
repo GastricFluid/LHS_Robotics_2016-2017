@@ -59,10 +59,7 @@ def run():
     return
 
 def view():
-    if video.isOpened(): # try to get the first frame
-        rval, frame = video.read()
-    else:
-        rval = False
+    rval = True
 
     while rval:
         cv2.imshow("preview", frame)
@@ -78,9 +75,7 @@ def grabPicture():
         rval, frame = video.read()
     else:
         return None
-
-
-    if ret == 1:
+    if rval == 1:
         return frame
 
 ##    cv2.imwrite('capture.png', frame)
