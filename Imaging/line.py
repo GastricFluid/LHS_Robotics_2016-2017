@@ -6,7 +6,7 @@ import Camera
 
 def corners(lines):
     
-    cornerarray=np.ndarray([[lines[2][0][0], lines[2][0][1]],
+    cornerarray=np.array([[lines[2][0][0], lines[2][0][1]],
                             [lines[0][0][0], lines[0][0][1]],
                             [lines[3][0][0], lines[3][0][1]],
                             [lines[1][0][0], lines[1][0][1]],
@@ -43,5 +43,6 @@ def finalcorners():
     Camera.init()
     
     lines = Camera.getLines()
+    print lines[1][0][3]
     return corners(lines)
 
