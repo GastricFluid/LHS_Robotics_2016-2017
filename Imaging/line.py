@@ -39,10 +39,8 @@ def corners(lines):
 
 
 
-def finalcorners():
-    Camera.init()
-    
+def finalcorners():    
     lines = Camera.getLines()
-    print lines[1][0][3]
+    
     return corners(lines)
 
