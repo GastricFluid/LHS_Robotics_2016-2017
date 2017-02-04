@@ -12,22 +12,36 @@ video=cv2.VideoCapture(videoSource)
 minLineLength = 0
 maxLineGap = 0
 
+lower = np.array([0,0,0], dtype = np.uint8)
+upper = np.array([255, 255, 255], dtype = np.uint8)
 
-def calibrate(knownDistance):
+def calibrateCamera(knownDistance):
     lines=getLines()
 
     calculatedPixels = lineLength(midpt(lines[0][0]),midpt(lines[2][0]))
 
     focal= calibrateCamera.determineFocal(knownDistance, 2, calculatedPixels)
     #Store focal in file
-    CameraConfig.write([127, 50, 5, focal])
+    CameraConfig.write([127, 50, 5, focal], 'Camera.cfg')
+
     
+def calibrateFilter():
+    #storing low and high values for the mask
+    CameraConfig.write([88, 212, 177, 235, 220, 255], 'RopeFilter.cfg')
+    CameraConfig.write([0, 0, 0],'LowerTargetFilter.cfg')
+    CameraConfig.write([175, 158, 255], 'UpperTargetFilter.cfg')
+
 def init():
     #Read focal point from file
-    global thresh, minLineLength, maxLineGap, focal
+    global thresh, minLineLength, maxLineGap, focal, lower, upper
 
-    thresh, minLineLength, maxLineGap, focal = CameraConfig.read()
+    thresh, minLineLength, maxLineGap, focal = CameraConfig.read('Camera.cfg')
+    rL, gL, bL = CameraConfig.read('LowerTargetFilter.cfg')
+    rU, gU, bU = CameraConfig.read('UpperTargetFilter.cfg')
 
+    lower = np.array([rL, gL, bL], dtype = np.uint8)
+    upper = np.array([rU, gU, bU], dtype = np.uint8)
+    
     return
 
 def run():
@@ -68,9 +82,12 @@ def getLines():
     while True:
         img=grabPicture()
         ##img = cv2.imread('test1.jpg')
-        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        im_bw = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)[1]
-        edges = cv2.Canny(im_bw,50,120)
+##        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+##        im_bw = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)[1]
+        mask = cv2.inRange(img, lower, upper)
+        mask = cv2.bitwise_not(mask)
+        
+        edges = cv2.Canny(mask,50,120)
 
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
 
@@ -82,7 +99,7 @@ def getLines():
             if len(lines) >= 4:
                 ##print lines
                 break
-    cv2.destroyAllWindows()
+    ##cv2.destroyAllWindows()
     return lines
 
 def lineLength(p1,p2):
