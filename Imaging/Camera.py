@@ -15,8 +15,8 @@ maxLineGap = 0
 lower = np.array([0,0,0], dtype = np.uint8)
 upper = np.array([255, 255, 255], dtype = np.uint8)
 
-imageType = 'RGB'#CameraConfig.RGBorHSV()
-#print imageType
+imageType = 'RGB'
+
 
 def calibrateCamera(knownDistance):
     lines=getLines()
@@ -27,7 +27,7 @@ def calibrateCamera(knownDistance):
     #Store focal in file
     CameraConfig.write([127, 50, 5, focal], 'Camera.cfg')
 
-def calibratePicture(test, imageType):
+def calibratePicture(test, imageType): #test is 0 if taking real image, 1 if taking test image
     CameraConfig.write([test, imageType], 'ImageType.cfg')
     
 def calibrateFilter():
@@ -40,10 +40,11 @@ def calibrateFilter():
 
 def init():
     #Read focal point from file
-    global thresh, minLineLength, maxLineGap, focal, lower, upper
+    global thresh, minLineLength, maxLineGap, focal, lower, upper, test, imageType
 
     thresh, minLineLength, maxLineGap, focal = CameraConfig.read('Camera.cfg')
- 
+    test, imageType = CameraConfig.read('ImageType.cfg')
+    
     if imageType == 'RGB':
         rL, gL, bL = CameraConfig.read('LowerTargetFilterRGB.cfg')
         rU, gU, bU = CameraConfig.read('UpperTargetFilterRGB.cfg')
@@ -73,41 +74,38 @@ def view():
     return
 
 def grabPicture():
+    rval = 0
     if video.isOpened(): # try to get the first frame
         rval, frame = video.read()
     else:
         return None
     if rval == 1:
         return frame
-
-##    cv2.imwrite('capture.png', frame)
-##    cv2.imshow('test',frame)
     
     return None
+
 def grabTestPicture():
     return cv2.imread('test1.jpg')
+
 def getLines():
-##    global imageType
-    ##img=grabPicture()
-    img=grabTestPicture()
-    ##if img == None:
-        ##return None
-    
-    if imageType == 'HSV':
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-    ##img = cv2.imread('test1.jpg')
-##        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-##        im_bw = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)[1]
-    ##mask = cv2.inRange(img, lower, upper)
-    ##mask = cv2.bitwise_not(mask)
-    
+    if test == 0:
+        img=grabPicture()
+        if imageType == 'HSV':
+            img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(img, lower, upper)
+        img = cv2.bitwise_not(mask)
+
+    elif test == 1:
+        img=grabTestPicture()
+    if img is None:
+        return None
+        
     edges = cv2.Canny(img,50,120)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
 
-    if len(lines) < 4:
+    if (len(lines) == 1 and len(lines[0]) < 4) or (len(lines) != 1 and len(lines) < 4):
         return None
-        ##print 'None'
         
     ##cv2.destroyAllWindows()
     return lines
