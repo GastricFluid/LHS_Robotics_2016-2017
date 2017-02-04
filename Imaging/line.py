@@ -5,7 +5,9 @@ import cv2
 import Camera
 
 def corners(lines):
-    if len(lines[0]) == 1:
+    if lines == None or lines[0] == None:
+        return None
+    elif len(lines[0]) == 1:
         cornerarray=np.array([[lines[2][0][0], lines[2][0][1]],
                             [lines[0][0][0], lines[0][0][1]],
                             [lines[3][0][0], lines[3][0][1]],
@@ -25,8 +27,8 @@ def corners(lines):
                             [lines[0][3][2], lines[0][3][3]],
                             [lines[0][1][2], lines[0][1][3]]])                  
         return cornerarray
-    else:
-        return None
+
+    return None
     
 ##    i=0
 ##    n=0
