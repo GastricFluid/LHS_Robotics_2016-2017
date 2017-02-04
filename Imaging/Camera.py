@@ -104,7 +104,8 @@ def getLines():
     edges = cv2.Canny(img,50,120)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
-    print lines
+    
+    print len(lines)
 
     if len(lines) < 4:
         return None
