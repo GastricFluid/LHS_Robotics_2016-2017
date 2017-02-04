@@ -45,4 +45,3 @@ def finalcorners():
     lines = Camera.getLines()
     return corners(lines)
 
-finalcorners()

@@ -27,6 +27,8 @@ def calibrateCamera(knownDistance):
     #Store focal in file
     CameraConfig.write([127, 50, 5, focal], 'Camera.cfg')
 
+def calibratePicture(test, imageType):
+    CameraConfig.write([test, imageType], 'ImageType.cfg')
     
 def calibrateFilter():
     #storing low and high values for the mask
@@ -118,4 +120,3 @@ def midpt(line):
     midy = (line[1] + line[3])/2
     return midx,midy
 
-print getLines()
