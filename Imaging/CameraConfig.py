@@ -9,3 +9,14 @@ def read(fileName):
     with open(fileName, 'r') as f:
         return pickle.load(f)
 
+def RGBorHSV():
+    inp = raw_input('RGB or HSV?')
+    inp = inp.lower()
+    print inp
+    if inp == 'r':
+        return 'RGB'
+    elif inp == 'h':
+        return 'HSV'
+    else:
+        return RGBorHSV()
+

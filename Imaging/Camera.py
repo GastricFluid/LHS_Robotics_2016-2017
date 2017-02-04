@@ -15,6 +15,9 @@ maxLineGap = 0
 lower = np.array([0,0,0], dtype = np.uint8)
 upper = np.array([255, 255, 255], dtype = np.uint8)
 
+imageType = 'RGB'#CameraConfig.RGBorHSV()
+#print imageType
+
 def calibrateCamera(knownDistance):
     lines=getLines()
 
@@ -28,19 +31,27 @@ def calibrateCamera(knownDistance):
 def calibrateFilter():
     #storing low and high values for the mask
     CameraConfig.write([88, 212, 177, 235, 220, 255], 'RopeFilter.cfg')
-    CameraConfig.write([0, 0, 0],'LowerTargetFilter.cfg')
-    CameraConfig.write([175, 158, 255], 'UpperTargetFilter.cfg')
+    CameraConfig.write([0, 0, 0],'LowerTargetFilterRGB.cfg')
+    CameraConfig.write([175, 158, 255], 'UpperTargetFilterRGB.cfg')
+    CameraConfig.write([0, 0, 134], 'LowerTargetFilterHSV.cfg')
+    CameraConfig.write([127, 100, 200], 'UpperTargetFilterHSV.cfg')
 
 def init():
     #Read focal point from file
     global thresh, minLineLength, maxLineGap, focal, lower, upper
 
     thresh, minLineLength, maxLineGap, focal = CameraConfig.read('Camera.cfg')
-    rL, gL, bL = CameraConfig.read('LowerTargetFilter.cfg')
-    rU, gU, bU = CameraConfig.read('UpperTargetFilter.cfg')
-
-    lower = np.array([rL, gL, bL], dtype = np.uint8)
-    upper = np.array([rU, gU, bU], dtype = np.uint8)
+ 
+    if imageType == 'RGB':
+        rL, gL, bL = CameraConfig.read('LowerTargetFilterRGB.cfg')
+        rU, gU, bU = CameraConfig.read('UpperTargetFilterRGB.cfg')
+        lower = np.array([rL, gL, bL], dtype = np.uint8)
+        upper = np.array([rU, gU, bU], dtype = np.uint8)
+    elif imageType == 'HSV':
+        hL, sL, vL = CameraConfig.read('LowerTargetFilterHSV.cfg')
+        hU, sU, vU = CameraConfig.read('UpperTargetFilterHSV.cfg')
+        lower = np.array([hL, sL, vL], dtype = np.uint8)
+        upper = np.array([hU, sU, vU], dtype = np.uint8)
     
     return
 
@@ -60,40 +71,42 @@ def view():
     return
 
 def grabPicture():
-    
-    rval = True
-
-    while rval:
-        ret, frame = video.read()
-        if ret == 1:
-            break
+    if video.isOpened(): # try to get the first frame
+        rval, frame = video.read()
+    else:
+        return None
+    if rval == 1:
+        return frame
 
 ##    cv2.imwrite('capture.png', frame)
 ##    cv2.imshow('test',frame)
     
-    return frame
-
+    return None
+def grabTestPicture():
+    return cv2.imread('test1.jpg')
 def getLines():
-    while True:
-        img=grabPicture()
-        ##img = cv2.imread('test1.jpg')
+##    global imageType
+    ##img=grabPicture()
+    img=grabTestPicture()
+    ##if img == None:
+        ##return None
+    
+    if imageType == 'HSV':
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+    ##img = cv2.imread('test1.jpg')
 ##        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 ##        im_bw = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)[1]
-        mask = cv2.inRange(img, lower, upper)
-        mask = cv2.bitwise_not(mask)
+    ##mask = cv2.inRange(img, lower, upper)
+    ##mask = cv2.bitwise_not(mask)
+    
+    edges = cv2.Canny(img,50,120)
+
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
+
+    if len(lines) < 4:
+        return None
+        ##print 'None'
         
-        edges = cv2.Canny(mask,50,120)
-
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
-
-        if lines is None:
-            continue
-            ##print 'None'
-        else:
-            ##print lines.size, len(lines)
-            if len(lines) >= 4:
-                ##print lines
-                break
     ##cv2.destroyAllWindows()
     return lines
 
@@ -105,3 +118,4 @@ def midpt(line):
     midy = (line[1] + line[3])/2
     return midx,midy
 
+print getLines()
