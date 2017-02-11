@@ -12,7 +12,6 @@ def read(fileName):
 def RGBorHSV():
     inp = raw_input('RGB or HSV?')
     inp = inp.lower()
-    print inp
     if inp == 'r':
         return 'RGB'
     elif inp == 'h':

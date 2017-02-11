@@ -18,23 +18,23 @@ def SerTest():
 	ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
 	angle = 90
 	ser.write(str(angle).encode())
-	print ser.readline()
+	print(ser.readline())
 	
 
 def Main():
 	Camera.init()
 	waitloop = 0
 	ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0)
-	print "ook"
+	print("ook")
 	while True:
-		print "in while"
+		print("in while")
 		given_corners = CornerInput()
-		print given_corners
+		print(given_corners)
 		if given_corners != None:
 			angle = AngleOut(given_corners)
-			print angle
+			print(angle)
 			ser.write(str(angle).encode())
-			print ser.readline()
+			print(ser.readline())
 			while ser.out_waiting() != 0 and waitloop <= 11:
 				waitloop += 1
 				pass
