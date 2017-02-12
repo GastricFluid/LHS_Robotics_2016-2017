@@ -71,7 +71,7 @@ def init():
         video = PiCamera()
         video.resolution = (cols,rows)
         video.framerate = 24
-        rawCapture = PiRGBArray(camera,size=(cols,rows))
+        rawCapture = PiRGBArray(video,size=(cols,rows))
     else:
          video = cv2.VideoCapture(videoSource)
     return
