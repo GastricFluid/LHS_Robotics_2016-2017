@@ -14,7 +14,7 @@ video=None
 rawCapture = None
 
 cols = 320
-rows = 120
+rows = 240
 usb = True
 test = 0
 
