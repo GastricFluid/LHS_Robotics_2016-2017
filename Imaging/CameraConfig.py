@@ -2,15 +2,15 @@ import pickle
 fileName='Camera.cfg'
 
 def write(values, fileName):
-    with open(fileName, 'w') as f:
+    with open(fileName, 'wb') as f:
         pickle.dump(values, f)
 
 def read(fileName):
-    with open(fileName, 'r') as f:
+    with open(fileName, 'rb') as f:
         return pickle.load(f)
 
 def RGBorHSV():
-    inp = raw_input('RGB or HSV?')
+    inp = input('RGB or HSV?')
     inp = inp.lower()
     if inp == 'r':
         return 'RGB'
