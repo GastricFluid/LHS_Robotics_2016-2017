@@ -18,6 +18,7 @@ cv2.createTrackbar('Sat High','image',0,255,nothing)
 cv2.createTrackbar('Value High','image',0,255,nothing)
 
 img = None
+Camera.init()
 while img is None:
     img = Camera.grabPicture()
     if img is not None:
