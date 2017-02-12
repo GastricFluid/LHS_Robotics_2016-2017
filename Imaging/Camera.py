@@ -5,6 +5,7 @@ import math
 import picamera
 from picamera import PiCamera
 from picamera.array import PiRGBArray
+import os
 
 focal = 0
 thresh = 0
