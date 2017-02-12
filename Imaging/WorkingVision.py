@@ -13,23 +13,23 @@ minLineLength = 50
 maxLineGap = 5
 
 lines = cv2.HoughLinesP(edges, 1, np.pi/180, 127, minLineLength, maxLineGap)
-print lines
+print(lines)
 
-print 'corners:'
-print line.finalcorners()
+print('corners:')
+print(line.finalcorners())
 calculatedPixels = line.length(line.midpt(lines[0][0]),line.midpt(lines[2][0]))
-print calculatedPixels
-print line.length(line.midpt(lines[2][0]),line.midpt(lines[3][0]))
-print line.length(line.midpt(lines[2][0]),line.midpt(lines[1][0]))
+print(calculatedPixels)
+print(line.length(line.midpt(lines[2][0]),line.midpt(lines[3][0])))
+print(line.length(line.midpt(lines[2][0]),line.midpt(lines[1][0])))
 
 
 
 
 focal = calibrate.determineFocal(24, 2, calculatedPixels)
-print focal    
+print(focal)    
 
 distance = calibrate.calculateDistance(focal, 2, calculatedPixels)
-print distance
+print(distance)
 
 ##cv2.imshow("edges", img)
 ##cv2.imshow("lines", im_bw)

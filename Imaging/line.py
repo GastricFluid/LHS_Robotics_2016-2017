@@ -2,12 +2,33 @@ from operator import itemgetter
 import math
 import numpy as np
 import cv2
+import Camera
 
 def corners(lines):
-    
-    cornerarray=np.array([[lines[2][0][0],lines[2][0][1]],[lines[0][0][0],lines[0][0][1]],[lines[3][0][0],lines[3][0][1]],[lines[1][0][0],lines[1][0][1]],[lines[2][0][2],lines[2][0][2]],[lines[0][0][2],lines[0][0][3]],[lines[3][0][2],lines[3][0][3]],[lines[1][0][2],lines[1][0][3]]])
-                          
-    return cornerarray
+    if lines == None or lines[0] == None:
+        return None
+    elif len(lines[0]) == 1:
+        cornerarray=np.array([[lines[2][0][0], lines[2][0][1]],
+                            [lines[0][0][0], lines[0][0][1]],
+                            [lines[3][0][0], lines[3][0][1]],
+                            [lines[1][0][0], lines[1][0][1]],
+                            [lines[2][0][2], lines[2][0][3]],
+                            [lines[0][0][2], lines[0][0][3]],
+                            [lines[3][0][2], lines[3][0][3]],
+                            [lines[1][0][2], lines[1][0][3]]])
+        return cornerarray
+    elif len(lines[0]) > 1:
+        cornerarray=np.array([[lines[0][2][0], lines[0][2][1]],
+                            [lines[0][0][0], lines[0][0][1]],
+                            [lines[0][3][0], lines[0][3][1]],
+                            [lines[0][1][0], lines[0][1][1]],
+                            [lines[0][2][2], lines[0][2][3]],
+                            [lines[0][0][2], lines[0][0][3]],
+                            [lines[0][3][2], lines[0][3][3]],
+                            [lines[0][1][2], lines[0][1][3]]])                  
+        return cornerarray
+
+    return None
     
 ##    i=0
 ##    n=0
@@ -29,22 +50,9 @@ def corners(lines):
 ##    ##corners=sorted(corners, key=itemgetter(0))
     
 
-def length(p1,p2):
-    return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
 
-def midpt(line):
-    midx = (line[0] + line[2])/2
-    midy = (line[1] + line[3])/2
-    return midx,midy
 
-def finalcorners():
-    img = cv2.imread('test1.jpg')
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    thresh = 127
-    im_bw = cv2.threshold(gray, thresh, 255, cv2.THRESH_BINARY)[1]
-    edges = cv2.Canny(im_bw,50,120)
-    minLineLength = 50
-    maxLineGap = 5
-
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 127, minLineLength, maxLineGap)
+def finalcorners():    
+    lines = Camera.getLines()
+    
     return corners(lines)
