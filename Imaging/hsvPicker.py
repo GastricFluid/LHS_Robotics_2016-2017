@@ -20,7 +20,8 @@ cv2.createTrackbar('Value High','image',0,255,nothing)
 img = None
 while img is None:
     img = Camera.grabPicture()
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+    if img is not None:
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
 while(1):
     k = cv2.waitKey(1) & 0xFF
