@@ -100,8 +100,8 @@ def grabPicture():
         video.capture(rawCapture, format="bgr")
         frame = rawCapture.array
         M = cv2.getRotationMatrix2D((cols/2,rows/2),-90,1)
-	frame = cv2.warpAffine(frame,M,(cols,rows))
-	return frame
+        frame = cv2.warpAffine(frame,M,(cols,rows))
+        return frame
     else:
         rval = 0
         if video.isOpened(): # try to get the first frame
