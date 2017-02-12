@@ -51,7 +51,7 @@ def calibrateFilter():
 
 def init():
     #Read focal point from file
-    global thresh, minLineLength, maxLineGap, focal, lower, upper, test, imageType, cols, rows, usb, rawCapture
+    global thresh, minLineLength, maxLineGap, focal, lower, upper, test, imageType, cols, rows, usb, rawCapture, video
 
     thresh, minLineLength, maxLineGap, focal, cols, rows, usb = CameraConfig.read('Camera.cfg')
     test, imageType = CameraConfig.read('ImageType.cfg')
