@@ -1,13 +1,21 @@
 import cv2
 import numpy as np
-import calibrateCamera
 import CameraConfig
 import math
+import picamera
+from picamera import PiCamera
+from picamera.array import PiRGBArray
 
 focal = 0
 thresh = 0
 videoSource=0
-video=cv2.VideoCapture(videoSource)
+video=None
+rawCapture = None
+
+cols = 320
+rows = 120
+usb = True
+test = 0
 
 minLineLength = 0
 maxLineGap = 0
@@ -23,9 +31,9 @@ def calibrateCamera(knownDistance):
 
     calculatedPixels = lineLength(midpt(lines[0][0]),midpt(lines[2][0]))
 
-    focal= calibrateCamera.determineFocal(knownDistance, 2, calculatedPixels)
+    focal= determineFocal(knownDistance, 2, calculatedPixels)
     #Store focal in file
-    CameraConfig.write([127, 50, 5, focal], 'Camera.cfg')
+    CameraConfig.write([127, 50, 5, focal, 320, 120, True], 'Camera.cfg')
 
 def calibratePicture(test, imageType): #test is 0 if taking real image, 1 if taking test image
     CameraConfig.write([test, imageType], 'ImageType.cfg')
@@ -43,9 +51,9 @@ def calibrateFilter():
 
 def init():
     #Read focal point from file
-    global thresh, minLineLength, maxLineGap, focal, lower, upper, test, imageType
+    global thresh, minLineLength, maxLineGap, focal, lower, upper, test, imageType, cols, rows, usb, rawCapture
 
-    thresh, minLineLength, maxLineGap, focal = CameraConfig.read('Camera.cfg')
+    thresh, minLineLength, maxLineGap, focal, cols, rows, usb = CameraConfig.read('Camera.cfg')
     test, imageType = CameraConfig.read('ImageType.cfg')
     
     if imageType == 'RGB':
@@ -58,7 +66,14 @@ def init():
         hU, sU, vU = CameraConfig.read('UpperTargetFilterHSV.cfg')
         lower = np.array([hL, sL, vL], dtype = np.uint8)
         upper = np.array([hU, sU, vU], dtype = np.uint8)
-    
+
+    if usb == True:
+        video = PiCamera()
+        video.resolution = (cols,rows)
+        video.framerate = 24
+        rawCapture = PiRGBArray(camera,size=(cols,rows))
+    else:
+         video = cv2.VideoCapture(videoSource)
     return
 
 def run():
@@ -77,14 +92,26 @@ def view():
     return
 
 def grabPicture():
-    rval = 0
-    if video.isOpened(): # try to get the first frame
-        rval, frame = video.read()
-    else:
+    if video is None:
         return None
-    if rval == 1:
-        return frame
     
+    if usb == True:
+        # grab an image from the camera
+        video.capture(rawCapture, format="bgr")
+        frame = rawCapture.array
+        M = cv2.getRotationMatrix2D((cols/2,rows/2),-90,1)
+	frame = cv2.warpAffine(frame,M,(cols,rows))
+	return frame
+    else:
+        rval = 0
+        if video.isOpened(): # try to get the first frame
+            rval, frame = video.read()
+        else:
+            return None
+        if rval == 1:
+            return frame
+    
+        return None
     return None
 
 def grabTestPicture():
@@ -156,4 +183,12 @@ def midpt(line):
     midy = (line[1] + line[3])/2
     return midx,midy
 
-calibrateFilter()
+##This function determines the Focal Length of the camera
+def determineFocal(knownDistance, knownWidth, calculatedLength):
+    return calculatedLength * knownDistance / knownWidth
+
+##This function calculates the straight line distance the camera is from
+##a known object
+def calculateDistance(focal, width, calculatedLength):
+    return focal * width / calculatedLength
+
