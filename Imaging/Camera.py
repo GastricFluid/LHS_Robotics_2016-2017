@@ -38,8 +38,8 @@ def calibrateFilter():
     CameraConfig.write([10, 220, 255], 'UpperRopeFilterHSV.cfg')
     CameraConfig.write([0, 0, 0],'LowerTargetFilterRGB.cfg')
     CameraConfig.write([175, 158, 255], 'UpperTargetFilterRGB.cfg')
-    CameraConfig.write([0, 0, 134], 'LowerTargetFilterHSV.cfg')
-    CameraConfig.write([127, 100, 200], 'UpperTargetFilterHSV.cfg')
+    CameraConfig.write([50, 0, 200], 'LowerTargetFilterHSV.cfg')
+    CameraConfig.write([90, 255, 255], 'UpperTargetFilterHSV.cfg')
 
 def init():
     #Read focal point from file
@@ -107,6 +107,9 @@ def getLines():
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
 
+    if lines is None:
+        return None
+
     if (len(lines) == 1 and len(lines[0]) < 4) or (len(lines) != 1 and len(lines) < 4):
         return None
         
@@ -153,3 +156,4 @@ def midpt(line):
     midy = (line[1] + line[3])/2
     return midx,midy
 
+calibrateFilter()
