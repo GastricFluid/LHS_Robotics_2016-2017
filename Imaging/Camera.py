@@ -34,8 +34,8 @@ def calibrateFilter():
     #storing low and high values for the mask
     CameraConfig.write([88, 177, 220], 'LowerRopeFilterRGB.cfg')
     CameraConfig.write([212, 235, 255], 'UpperRopeFilterRGB.cfg')
-    CameraConfig.write([0, 124, 154], 'LowerRopeFilterHSV.cfg')
-    CameraConfig.write([10, 220, 255], 'UpperRopeFilterHSV.cfg')
+    CameraConfig.write([0, 40, 164], 'LowerRopeFilterHSV.cfg')
+    CameraConfig.write([38, 255, 255], 'UpperRopeFilterHSV.cfg')
     CameraConfig.write([0, 0, 0],'LowerTargetFilterRGB.cfg')
     CameraConfig.write([175, 158, 255], 'UpperTargetFilterRGB.cfg')
     CameraConfig.write([50, 0, 200], 'LowerTargetFilterHSV.cfg')
