@@ -34,7 +34,7 @@ def calibrateCamera(knownDistance):
 
     focal= determineFocal(knownDistance, 2, calculatedPixels)
     #Store focal in file
-    CameraConfig.write([127, 50, 5, focal, 320, 120, True], 'Camera.cfg')
+    CameraConfig.write([127, 50, 5, focal, 320, 240, True], 'Camera.cfg')
 
 def calibratePicture(test, imageType): #test is 0 if taking real image, 1 if taking test image
     CameraConfig.write([test, imageType], 'ImageType.cfg')
@@ -98,6 +98,7 @@ def grabPicture():
     
     if usb == True:
         # grab an image from the camera
+        rawCapture.truncate(0)
         video.capture(rawCapture, format="bgr")
         frame = rawCapture.array
         M = cv2.getRotationMatrix2D((cols/2,rows/2),-90,1)
