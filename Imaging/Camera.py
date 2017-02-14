@@ -92,17 +92,26 @@ def view():
     cv2.destroyWindow("preview")
     return
 
+def snapshot(img):
+    while True:
+        cv2.imshow("snapshot", img)
+        key = cv2.waitKey(20)
+        if key == 27: #exit on ESC
+            break
+    cv2.destroyWindow("snapshot")
+    return
+
 def grabPicture():
     if video is None:
         return None
     
     if usb == True:
         # grab an image from the camera
-        rawCapture.truncate(0)
         video.capture(rawCapture, format="bgr")
         frame = rawCapture.array
         M = cv2.getRotationMatrix2D((cols/2,rows/2),-90,1)
         frame = cv2.warpAffine(frame,M,(cols,rows))
+        rawCapture.truncate(0)
         return frame
     else:
         rval = 0
