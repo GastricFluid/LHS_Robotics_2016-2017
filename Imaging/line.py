@@ -3,29 +3,30 @@ import math
 import numpy as np
 import cv2
 import Camera
+import RectangleSort
 
 def corners(lines):
-    if lines == None or lines[0] == None:
+    if lines is None or lines[0] is None:
         return None
     elif len(lines[0]) == 1:
-        cornerarray=np.array([[lines[2][0][0], lines[2][0][1]],
-                            [lines[0][0][0], lines[0][0][1]],
-                            [lines[3][0][0], lines[3][0][1]],
-                            [lines[1][0][0], lines[1][0][1]],
+        cornerarray=np.array([[lines[0][0][2], lines[0][0][3]],
+                            [lines[1][0][2], lines[1][0][3]],
                             [lines[2][0][2], lines[2][0][3]],
-                            [lines[0][0][2], lines[0][0][3]],
                             [lines[3][0][2], lines[3][0][3]],
-                            [lines[1][0][2], lines[1][0][3]]])
+                            [lines[0][0][0], lines[0][0][1]],
+                            [lines[1][0][0], lines[1][0][1]],
+                            [lines[2][0][0], lines[2][0][1]],
+                            [lines[3][0][0], lines[3][0][1]]])
         return cornerarray
     elif len(lines[0]) > 1:
-        cornerarray=np.array([[lines[0][2][0], lines[0][2][1]],
-                            [lines[0][0][0], lines[0][0][1]],
-                            [lines[0][3][0], lines[0][3][1]],
-                            [lines[0][1][0], lines[0][1][1]],
+        cornerarray=np.array([[lines[0][0][2], lines[0][0][3]],
+                            [lines[0][1][2], lines[0][1][3]],
                             [lines[0][2][2], lines[0][2][3]],
-                            [lines[0][0][2], lines[0][0][3]],
                             [lines[0][3][2], lines[0][3][3]],
-                            [lines[0][1][2], lines[0][1][3]]])                  
+                            [lines[0][0][0], lines[0][0][1]],
+                            [lines[0][1][0], lines[0][1][1]],
+                            [lines[0][2][0], lines[0][2][1]],
+                            [lines[0][3][0], lines[0][3][1]]])                  
         return cornerarray
 
     return None
@@ -54,5 +55,5 @@ def corners(lines):
 
 def finalcorners():    
     lines = Camera.getLines()
-    
-    return corners(lines)
+
+    return corners(RectangleSort.sortRectangles(lines,2))
