@@ -29,6 +29,13 @@ public class Robot extends SampleRobot {
 	
 	Joystick stick = new Joystick(kJoystickChannel);
 	
+	public RobotInterface currentState;
+	public ManualState manualState;
+	public FindAndClimbState climbState;
+	public ForwardDriveAutState forwardState;
+	public StopState stopState;
+	public CameraAndAdjustState cameraState;
+
 
 	public Robot() {
 		robotDrive = new RobotDrive(kFrontLeftChannel, kRearLeftChannel, kFrontRightChannel, kRearRightChannel);
@@ -55,17 +62,23 @@ public class Robot extends SampleRobot {
 			// movement, and Z axis for rotation.
 			// This sample does not use field-oriented drive, so the gyro input
 			// is set to zero.
-			robotDrive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), stick.getZ(), 0);
-
-			if (stick.getRawButton(2)){
-				testRelay.set(Relay.Value.kOn);
-			}
-			else{
-				testRelay.set(Relay.Value.kOff);
-			}
+			
+			currentState.StateProcess();
+			
 			
 			Timer.delay(0.005); // wait 5ms to avoid hogging CPU cycles
 		}
+		
+		
 	}
+	
+	 public void autonomousInit() {
+		 currentState=forwardState
+     }
+
+     public void autonomousPeriodic() {
+    	 currentState.StateProcess();
+ \    }
+
 	
 }
