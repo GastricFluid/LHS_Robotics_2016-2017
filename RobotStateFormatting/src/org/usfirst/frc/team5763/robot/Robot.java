@@ -1,6 +1,18 @@
 package org.usfirst.frc.team5763.robot;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,6 +24,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	private RobotDrive myRobot = new RobotDrive(0,1,2,3);
+	private Spark rope1 = new Spark(8);
+	private Spark rope2 = new Spark(9);
+	private Joystick stick = new Joystick(0);
+	private Timer timer = new Timer();
+	private Relay myRelay = new Relay(0);
+	private PowerDistributionPanel myPDP = new PowerDistributionPanel();
+	private AnalogInput rangesensor = new AnalogInput(0);
+	private DoubleSolenoid mySolenoid = new DoubleSolenoid(2, 3);
+	private SerialPort myPort = new SerialPort(9600, SerialPort.Port.kOnboard);
+	private ADXRS450_Gyro myGyro = new ADXRS450_Gyro();
+	private Accelerometer myAccel = new BuiltInAccelerometer();
+	
+	
+	// axis offset vars
+	double yoffset = 0.14; // offset added to correct left joystick y-axis
+	double xoffset = 0.14;
+	
+	// range sensor vars
+	double rangedist = 0; // value to hold calculated range distance in inches
+	public static final double rangescaleval = 0.000977; // value to scale voltage from range sensor
+	
+	// amperage  vars
+	double maxobservedamps = 0;
+	double maxallowedamps = 15;
+	
+	// position vars
+	double x = 0;
+	double y = 0;
+	double phi = 0;
+	
+	
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
 	String autoSelected;
@@ -23,15 +67,47 @@ public class Robot extends IterativeRobot {
 	public StopState stopState;
 	public CameraAndAdjustState cameraState;
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+	public double range() {
+		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
+	}
+	
+	public double getaxis(int axis){
+		double val = 0;
+		double accel = 0;
+		val = stick.getRawAxis(axis);
+//		if (axis == 1){
+//			val += yoffset;
+//		}
+
+		if (val < 0.2 && val > -0.2){
+			return 0;
+		}
+		else
+			return val / 3;
+	}	
+	
+	public void processButton(int b){
+		switch(b){
+		case 1:
+			break;
+		case 2:
+			break;
+		}
+		
+	}
+	
+	
+	
+	
 	@Override
 	public void robotInit() {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
+		myGyro.calibrate();
 		
 		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
 		//manualState = new ManualState(this);
@@ -39,17 +115,7 @@ public class Robot extends IterativeRobot {
 		//ect.
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
+
 	@Override
 	public void autonomousInit() {
 		autoSelected = chooser.getSelected();
@@ -59,6 +125,8 @@ public class Robot extends IterativeRobot {
 		
 		//you want to set the robot's state to the automated driving at autonomous init
 		currentState = driveState;
+		timer.reset();
+		timer.start();
 	}
 
 	/**
@@ -66,18 +134,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (autoSelected) {
-		case customAuto:
-			// Put custom auto code here
-			
-			//I think that the state process should go here
-			currentState.StateProcess();
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
+		while (timer.get() < 15){
+			switch (autoSelected) {
+			case customAuto:
+				// Put custom auto code here
+				
+				
+				
+				//I think that the state process should go here
+				currentState.StateProcess();
+				break;
+			case defaultAuto:
+			default:
+				// Put default auto code here
+				break;
+			}
 		}
+		teleopInit();
 	}
 
 	/**
