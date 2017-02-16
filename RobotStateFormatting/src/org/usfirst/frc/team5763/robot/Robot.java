@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 		
 		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
 		//manualState = new ManualState(this);
-		//driveState = new DriveState(this);
+		driveState = new DriveAutState(this);
 		//ect.
 	}
 
@@ -135,20 +135,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		while (timer.get() < 15){
-			switch (autoSelected) {
-			case customAuto:
-				// Put custom auto code here
-				
-				
-				
-				//I think that the state process should go here
-				currentState.StateProcess();
-				break;
-			case defaultAuto:
-			default:
-				// Put default auto code here
-				break;
-			}
+			currentState.StateProcess();
+
 		}
 		currentState = manualState;
 		teleopInit();

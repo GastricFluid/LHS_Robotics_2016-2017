@@ -4,6 +4,10 @@ public class DriveAutState implements RobotInterface {
 	
 	private Robot robot;
 	
+	public DriveAutState(Robot currentState){
+		robot = currentState;
+	}
+	
 	public void StateProcess(){
 		//this process will include the code that moves the robot towards a certain vector/destination
 		//Switches to Manual State at 15 second (when automated phase ends)
