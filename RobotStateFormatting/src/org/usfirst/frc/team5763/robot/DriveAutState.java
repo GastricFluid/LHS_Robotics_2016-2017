@@ -2,14 +2,27 @@ package org.usfirst.frc.team5763.robot;
 
 public class DriveAutState implements RobotInterface {
 	
-	public void StateProcess(){}
+	private Robot robot;
 	
-	public void ToDriveAutState(){
+	public void StateProcess(){
+		//this process will include the code that moves the robot towards a certain vector/destination
+		//Switches to Manual State at 15 second (when automated phase ends)
+		//Switches to CameraAndAdjust when a signal is given that it is near the reflective tape
 	}
 	
-	public void ToManualState(){}
+	public void ToDriveAutState(){
+		robot.currentState = robot.driveState;
+	}
 	
-	public void ToStopState(){}
+	public void ToManualState(){
+		robot.currentState = robot.manualState;
+	}
 	
-	public void ToCameraAndAdjustState(){}
+	public void ToStopState(){
+		robot.currentState = robot.stopState;
+	}
+	
+	public void ToCameraAndAdjustState(){
+		robot.currentState = robot.cameraState;
+	}
 }

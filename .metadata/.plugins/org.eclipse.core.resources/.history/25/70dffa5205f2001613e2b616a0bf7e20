@@ -1,0 +1,14 @@
+package org.usfirst.frc.team5763.robot;
+
+public interface RobotInterface {
+	
+	void ToStateProcess();
+	
+	void ToStopState();
+	
+	void ToManualState();
+	
+	void ToFindAndClimbState();
+
+	void ToCameraAndPositionState();
+}

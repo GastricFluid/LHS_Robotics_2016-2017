@@ -1,0 +1,28 @@
+package org.usfirst.frc.team5763.robot;
+
+public class StopState implements RobotInterface {
+	
+	public void StateProcess(){
+		
+	}
+
+	public void ToStopState(){
+		
+	}
+	
+	public void ToManualState(){
+		
+	}
+	
+	public void ToFindAndClimbState(){
+		
+	}
+	
+	public void ToDriveForwardAutState(){
+		
+	}
+	
+	public void ToCameraAndPositionState(){
+		
+	}
+}

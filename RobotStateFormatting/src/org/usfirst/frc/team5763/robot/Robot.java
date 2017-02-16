@@ -32,6 +32,11 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		
+		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
+		//manualState = new ManualState(this);
+		//driveState = new DriveState(this);
+		//ect.
 	}
 
 	/**
