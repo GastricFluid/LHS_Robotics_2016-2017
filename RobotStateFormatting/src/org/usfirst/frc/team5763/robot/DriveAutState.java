@@ -8,6 +8,12 @@ public class DriveAutState implements RobotInterface {
 		//this process will include the code that moves the robot towards a certain vector/destination
 		//Switches to Manual State at 15 second (when automated phase ends)
 		//Switches to CameraAndAdjust when a signal is given that it is near the reflective tape
+		if (robot.timer.get() < 2.0) {
+			robot.myRobot.drive(-0.5, 0.0); // drive forwards half speed
+		} else {
+			robot.myRobot.drive(0.0, 0.0); // stop robot
+			robot.teleopInit();
+		}
 	}
 	
 	public void ToDriveAutState(){

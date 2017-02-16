@@ -24,18 +24,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	private RobotDrive myRobot = new RobotDrive(0,1,2,3);
-	private Spark rope1 = new Spark(8);
-	private Spark rope2 = new Spark(9);
-	private Joystick stick = new Joystick(0);
-	private Timer timer = new Timer();
-	private Relay myRelay = new Relay(0);
-	private PowerDistributionPanel myPDP = new PowerDistributionPanel();
-	private AnalogInput rangesensor = new AnalogInput(0);
-	private DoubleSolenoid mySolenoid = new DoubleSolenoid(2, 3);
-	private SerialPort myPort = new SerialPort(9600, SerialPort.Port.kOnboard);
-	private ADXRS450_Gyro myGyro = new ADXRS450_Gyro();
-	private Accelerometer myAccel = new BuiltInAccelerometer();
+	public RobotDrive myRobot = new RobotDrive(0,1,2,3);
+	public Spark rope1 = new Spark(8);
+	public Spark rope2 = new Spark(9);
+	public Joystick stick = new Joystick(0);
+	public Timer timer = new Timer();
+	public Relay myRelay = new Relay(0);
+	public PowerDistributionPanel myPDP = new PowerDistributionPanel();
+	public AnalogInput rangesensor = new AnalogInput(0);
+	public DoubleSolenoid mySolenoid = new DoubleSolenoid(2, 3);
+	public SerialPort myPort = new SerialPort(9600, SerialPort.Port.kOnboard);
+	public ADXRS450_Gyro myGyro = new ADXRS450_Gyro();
+	public Accelerometer myAccel = new BuiltInAccelerometer();
 	
 	
 	// axis offset vars
@@ -150,6 +150,7 @@ public class Robot extends IterativeRobot {
 				break;
 			}
 		}
+		currentState = manualState;
 		teleopInit();
 	}
 
