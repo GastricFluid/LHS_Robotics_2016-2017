@@ -15,7 +15,12 @@ def AngleOut(CornerArray):
 
 
 def SerTest():
-	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
+	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0)
+
+	#ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0)
+	
+
 	angle = 90
 	ser.write(str(angle).encode())
 	print(ser.readline())
@@ -24,7 +29,12 @@ def SerTest():
 def Main():
 	Camera.init()
 	waitloop = 0
+
 	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0)
+
+	#ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0)
+	
+
 	print("ook")
 	while True:
 		print("in while")
@@ -34,7 +44,7 @@ def Main():
 			angle = AngleOut(given_corners)
 			print(angle)
 			ser.write(str(angle).encode())
-			print(ser.readline())
+			#print(ser.readline())
 			while ser.out_waiting() != 0 and waitloop <= 11:
 				waitloop += 1
 				pass
