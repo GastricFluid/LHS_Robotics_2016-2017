@@ -4,10 +4,6 @@ public class ManualState implements RobotInterface {
 
 	private Robot robot;
 	
-	public ManualState(Robot currentState){
-		robot = currentState;
-	}
-	
 	public void StateProcess(){
 		//Contains all the button commands for general robot control
 		//Switches to DriveAutState on Button input

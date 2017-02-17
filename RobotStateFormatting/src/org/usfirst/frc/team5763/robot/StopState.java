@@ -4,6 +4,10 @@ public class StopState implements RobotInterface {
 
 	private Robot robot;
 	
+	public StopState(Robot currentState){
+		robot = currentState;
+	}
+	
 	public void StateProcess(){
 		//Stops all motor motion (possibly resets some calibration if deemed necicarry)
 		//Switches to Manual on Button interrupt

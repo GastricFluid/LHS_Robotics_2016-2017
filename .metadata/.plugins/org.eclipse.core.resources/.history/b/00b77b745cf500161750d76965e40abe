@@ -1,18 +1,13 @@
 package org.usfirst.frc.team5763.robot;
 
-public class ManualState implements RobotInterface {
+public class CameraAndAdjustState implements RobotInterface {
 
 	private Robot robot;
 	
-	public ManualState(Robot currentState){
-		robot = currentState;
-	}
-	
 	public void StateProcess(){
-		//Contains all the button commands for general robot control
-		//Switches to DriveAutState on Button input
-		//Switches to CameraAndAdjustState on Button input
-		//Switches to StopState on Button input
+		//This Process includes the code to recive the angle of the tape and move accordingly, and then flip gear when in range
+		//Switches to Manual on Button interruption
+		//Switches to Manual on Completion of gear placement
 	}
 	
 	public void ToDriveAutState(){

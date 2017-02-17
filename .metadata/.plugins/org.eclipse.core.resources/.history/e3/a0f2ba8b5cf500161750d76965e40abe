@@ -1,18 +1,12 @@
 package org.usfirst.frc.team5763.robot;
 
-public class ManualState implements RobotInterface {
+public class StopState implements RobotInterface {
 
 	private Robot robot;
 	
-	public ManualState(Robot currentState){
-		robot = currentState;
-	}
-	
 	public void StateProcess(){
-		//Contains all the button commands for general robot control
-		//Switches to DriveAutState on Button input
-		//Switches to CameraAndAdjustState on Button input
-		//Switches to StopState on Button input
+		//Stops all motor motion (possibly resets some calibration if deemed necicarry)
+		//Switches to Manual on Button interrupt
 	}
 	
 	public void ToDriveAutState(){

@@ -110,10 +110,8 @@ public class Robot extends IterativeRobot {
 		myGyro.calibrate();
 		
 		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
-		manualState = new ManualState(this);
+		//manualState = new ManualState(this);
 		driveState = new DriveAutState(this);
-		cameraState = new CameraAndAdjustState(this);
-		stopState = new StopState(this);
 		//ect.
 	}
 

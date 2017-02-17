@@ -3,6 +3,10 @@ package org.usfirst.frc.team5763.robot;
 public class CameraAndAdjustState implements RobotInterface {
 
 	private Robot robot;
+
+	public CameraAndAdjustState(Robot currentState){
+		robot = currentState;
+	}
 	
 	public void StateProcess(){
 		//This Process includes the code to recive the angle of the tape and move accordingly, and then flip gear when in range
