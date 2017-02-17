@@ -34,7 +34,7 @@ def calibrateCamera(knownDistance):
 
     focal= determineFocal(knownDistance, 2, calculatedPixels)
     #Store focal in file
-    CameraConfig.write([127, 50, 5, focal, 320, 240, True], 'Camera.cfg')
+    CameraConfig.write([10, 10, 5, focal, 320, 240, True], 'Camera.cfg')
 
 def calibratePicture(test, imageType): #test is 0 if taking real image, 1 if taking test image
     CameraConfig.write([test, imageType], 'ImageType.cfg')
@@ -143,7 +143,7 @@ def getLines():
         
     edges = cv2.Canny(img,50,120)
 
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
+    lines = cv2.HoughLinesP(image=edges, rho=0.02, theta=np.pi/500, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
 
     if lines is None:
         return None
@@ -175,7 +175,7 @@ def findRope():
     img = cv2.bitwise_not(mask)
     
     edges = cv2.Canny(img, 50, 120)
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, thresh, minLineLength, maxLineGap)
+    lines = cv2.HoughLinesP(image=edges, rho=0.02, theta=np.pi/500, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
 
     if lines is None:
         return None
