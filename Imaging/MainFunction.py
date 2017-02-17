@@ -34,7 +34,7 @@ def Main():
 			angle = AngleOut(given_corners)
 			print(angle)
 			ser.write(str(angle).encode())
-			print(ser.readline())
+			#print(ser.readline())
 			while ser.out_waiting() != 0 and waitloop <= 11:
 				waitloop += 1
 				pass
