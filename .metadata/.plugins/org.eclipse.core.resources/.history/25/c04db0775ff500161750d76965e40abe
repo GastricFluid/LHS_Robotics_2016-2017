@@ -16,10 +16,6 @@ public class DriveAutState implements RobotInterface {
 		if (robot.enc.get() >= 4){
 			robot.myRobot.drive(-.5, 0.0);
 		}
-		else
-		{
-			robot.myRobot.drive(0.0, 0.0);
-		}
 	}
 	
 	public void ToDriveAutState(){

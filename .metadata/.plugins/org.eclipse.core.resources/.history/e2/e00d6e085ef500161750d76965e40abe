@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -68,8 +67,6 @@ public class Robot extends IterativeRobot {
 	public StopState stopState;
 	public CameraAndAdjustState cameraState;
 
-	public Encoder enc;
-	
 	public double range() {
 		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
 	}
@@ -127,8 +124,6 @@ public class Robot extends IterativeRobot {
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
-		
-		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 		
 		//you want to set the robot's state to the automated driving at autonomous init
 		currentState = driveState;

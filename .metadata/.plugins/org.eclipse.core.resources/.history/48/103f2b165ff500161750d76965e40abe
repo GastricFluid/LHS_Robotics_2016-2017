@@ -68,8 +68,6 @@ public class Robot extends IterativeRobot {
 	public StopState stopState;
 	public CameraAndAdjustState cameraState;
 
-	public Encoder enc;
-	
 	public double range() {
 		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
 	}
@@ -108,6 +106,9 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		
+		Encoder enc;
+		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
 		myGyro.calibrate();
@@ -127,8 +128,6 @@ public class Robot extends IterativeRobot {
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
-		
-		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 		
 		//you want to set the robot's state to the automated driving at autonomous init
 		currentState = driveState;

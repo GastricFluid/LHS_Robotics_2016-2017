@@ -68,8 +68,6 @@ public class Robot extends IterativeRobot {
 	public StopState stopState;
 	public CameraAndAdjustState cameraState;
 
-	public Encoder enc;
-	
 	public double range() {
 		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
 	}
@@ -128,6 +126,7 @@ public class Robot extends IterativeRobot {
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
 		
+		Encoder enc;
 		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 		
 		//you want to set the robot's state to the automated driving at autonomous init
