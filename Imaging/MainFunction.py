@@ -28,7 +28,6 @@ def SerTest():
 
 def Main():
 	Camera.init()
-	waitloop = 0
 
 	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0)
 
@@ -45,11 +44,7 @@ def Main():
 			print(angle)
 			ser.write(str(angle).encode())
 			#print(ser.readline())
-			while ser.out_waiting() != 0 and waitloop <= 11:
-				waitloop += 1
-				pass
-			ser.reset_output_buffer()
-			waitloop = 0 
+
 	ser.close()
 
 
