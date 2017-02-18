@@ -43,8 +43,8 @@ def calibrateFilter():
     #storing low and high values for the mask
     CameraConfig.write([88, 177, 220], 'LowerRopeFilterRGB.cfg')
     CameraConfig.write([212, 235, 255], 'UpperRopeFilterRGB.cfg')
-    CameraConfig.write([0, 40, 164], 'LowerRopeFilterHSV.cfg')
-    CameraConfig.write([38, 255, 255], 'UpperRopeFilterHSV.cfg')
+    CameraConfig.write([22, 0, 195], 'LowerRopeFilterHSV.cfg')
+    CameraConfig.write([186, 226, 255], 'UpperRopeFilterHSV.cfg')
     CameraConfig.write([0, 0, 0],'LowerTargetFilterRGB.cfg')
     CameraConfig.write([175, 158, 255], 'UpperTargetFilterRGB.cfg')
     CameraConfig.write([50, 0, 200], 'LowerTargetFilterHSV.cfg')
@@ -143,7 +143,7 @@ def getLines():
         
     edges = cv2.Canny(img,50,120)
 
-    lines = cv2.HoughLinesP(image=edges, rho=0.02, theta=np.pi/500, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
+    lines = cv2.HoughLinesP(image=edges, rho=1, theta=np.pi, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
 
     if lines is None:
         return None
@@ -175,7 +175,7 @@ def findRope():
     img = cv2.bitwise_not(mask)
     
     edges = cv2.Canny(img, 50, 120)
-    lines = cv2.HoughLinesP(image=edges, rho=0.02, theta=np.pi/500, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
+    lines = cv2.HoughLinesP(image=edges, rho=1, theta=np.pi, lines=np.array([]),  threshold=thresh, minLineLength=minLineLength, maxLineGap=maxLineGap)
 
     if lines is None:
         return None
