@@ -1,19 +1,27 @@
 package org.usfirst.frc.team5763.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -55,6 +63,9 @@ public class Robot extends IterativeRobot {
 	double x = 0;
 	double y = 0;
 	double phi = 0;
+	double speedscale = 1;
+	
+	byte[] serstring;
 	
 	
 	final String defaultAuto = "Default";
@@ -74,21 +85,7 @@ public class Robot extends IterativeRobot {
 		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
 	}
 	
-	public double getaxis(int axis){
-		double val = 0;
-		double accel = 0;
-		val = stick.getRawAxis(axis);
-//		if (axis == 1){
-//			val += yoffset;
-//		}
-
-		if (val < 0.2 && val > -0.2){
-			return 0;
-		}
-		else
-			return val / 3;
-	}	
-	
+		
 	public void processButton(int b){
 		switch(b){
 		case 1:
@@ -107,9 +104,12 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
+		mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		
-		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
-		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
+		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		
+		//myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
+		//myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
 		myGyro.calibrate();
 		
 		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
@@ -124,12 +124,20 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		autoSelected = chooser.getSelected();
+		
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
 		
-		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		enc.setReverseDirection(true);
+		enc.reset();
 		
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.FALSE);
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.FALSE);
+		
+		
+		mySolenoid.set(DoubleSolenoid.Value.kReverse);
+
 		//you want to set the robot's state to the automated driving at autonomous init
 		currentState = driveState;
 		timer.reset();
@@ -141,20 +149,30 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 		while (timer.get() < 15){
 			currentState.StateProcess();
 
 		}
-		currentState = manualState;
+		enc.reset();
 		teleopInit();
+		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 	}
 
+	public void teleopInit(){
+		currentState = manualState;
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
+		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
+	}
+	
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
 		//I think that the state process should go here
+		mySolenoid.set(DoubleSolenoid.Value.kReverse);
+		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 		currentState.StateProcess();
 	}
 
@@ -164,8 +182,88 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		//I think that the state process should go here
-		currentState = manualState;
+		currentState = driveState;
+		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 		currentState.StateProcess();
+	}
+	
+	public void processButtons(){
+		// rope climb (A) and descend (B)
+		
+		while (stick.getRawButton(1)){
+				rope1.setSpeed(1);
+				rope2.setSpeed(1);
+		}
+		while (stick.getRawButton(2)){
+				rope1.setSpeed(-1);
+				rope2.setSpeed(-1);
+		}
+		while (stick.getRawButton(4)){
+			rope1.setSpeed(0);
+			rope2.setSpeed(0);
+		}
+	
+		// speed select (X)
+		if (stick.getRawButton(3)){
+			if (speedscale == 0.25){
+				speedscale = 0.5;
+			}
+			else if (speedscale == 0.5){
+				speedscale = 0.75;
+			}
+			else if (speedscale == 0.75){
+				speedscale = 1.0;
+			}
+			else if (speedscale == 1){
+				speedscale = .25;
+			}
+			SmartDashboard.putString("DB/String 5", " " + speedscale);
+			try {
+				Thread.sleep(250);
+			}
+			catch(InterruptedException e){}
+
+		}
+		
+		// compressor power (Y)
+		if (stick.getRawButton(4)){
+			
+			
+		}
+						
+		
+		// gear piston Lbump and Rbump
+		if (stick.getRawButton(5)){
+			mySolenoid.set(DoubleSolenoid.Value.kReverse);				
+		}
+		if (stick.getRawButton(6)){
+			mySolenoid.set(DoubleSolenoid.Value.kForward);				
+		}
+		
+	}
+	
+	public double getaxis(int axis){
+		double val = 0;
+		val = stick.getRawAxis(axis);
+//		if (axis == 1){
+//			val += yoffset;
+//		}
+
+		if (val < 0.2 && val > -0.2){
+			return 0;
+		}
+		else
+			return val / (1/speedscale);
+	}
+	
+	public void getSerial(){
+		try{
+			serstring = myPort.readString().getBytes();
+		} catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		//SmartDashboard.putString("DB/String 3", "Serial: " + Byte.toString(serstring[0]));
 	}
 }
 

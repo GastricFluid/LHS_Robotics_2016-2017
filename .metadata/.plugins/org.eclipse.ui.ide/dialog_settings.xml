@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="C:\Users\Eric\Desktop\LHS_Robotics_2016-2017\RobotStateFormatting"/>
+	</list>
 	<section name="NewWizardAction">
 		<item value="edu.wpi.first.wpilib.plugins.java.wizards.newproject.NewJavaWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">

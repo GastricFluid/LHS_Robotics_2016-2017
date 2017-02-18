@@ -1,5 +1,8 @@
 package org.usfirst.frc.team5763.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class DriveAutState implements RobotInterface {
 	
 	private Robot robot;
@@ -13,13 +16,29 @@ public class DriveAutState implements RobotInterface {
 		//this process will include the code that moves the robot towards a certain vector/destination
 		//Switches to Manual State at 15 second (when automated phase ends)
 		//Switches to CameraAndAdjust when a signal is given that it is near the reflective tape
-		if (robot.enc.get() >= 4){
-			robot.myRobot.drive(-.5, 0.0);
+		SmartDashboard.putString("DB/String 0", " " + robot.range());
+		robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
+		try {
+			Thread.sleep(250);
 		}
-		else
-		{
-			robot.myRobot.drive(0.0, 0.0);
+		catch(InterruptedException e){}
+		while (robot.range() > 40){
+			robot.myRobot.drive(.25, 0.0);
+			SmartDashboard.putString("DB/String 1", " " + robot.range());
 		}
+		while (robot.range() > 25){
+			robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
+			robot.myRobot.drive(.15, 0.0);
+			SmartDashboard.putString("DB/String 2", " " + robot.range());
+		}
+		
+		robot.myRobot.drive(0.0, 0.0);
+		robot.enc.reset();
+		while (robot.enc.get() < 10 || robot.timer.get() < 15){
+			robot.myRobot.drive(.15, 0.0);
+			SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
+		}
+		robot.myRobot.drive(0.0, 0.0);
 	}
 	
 	public void ToDriveAutState(){
@@ -27,6 +46,7 @@ public class DriveAutState implements RobotInterface {
 	}
 	
 	public void ToManualState(){
+		robot.enc.reset();
 		robot.currentState = robot.manualState;
 	}
 	

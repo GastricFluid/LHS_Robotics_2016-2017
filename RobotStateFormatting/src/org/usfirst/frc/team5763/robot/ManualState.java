@@ -8,11 +8,13 @@ public class ManualState implements RobotInterface {
 		robot = currentState;
 	}
 	
-	public void StateProcess(){
+	public void StateProcess() {
 		//Contains all the button commands for general robot control
 		//Switches to DriveAutState on Button input
 		//Switches to CameraAndAdjustState on Button input
 		//Switches to StopState on Button input
+		robot.myRobot.mecanumDrive_Cartesian(robot.getaxis(4),robot.getaxis(1),-1*robot.getaxis(2) + robot.getaxis(3),0);
+		robot.processButtons();		
 	}
 	
 	public void ToDriveAutState(){
