@@ -65,11 +65,14 @@ public class Robot extends IterativeRobot {
 	double phi = 0;
 	double speedscale = 1;
 	
+	double friction = .6;
+	
 	byte[] serstring;
 	
 	
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
+
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 	
@@ -84,20 +87,37 @@ public class Robot extends IterativeRobot {
 	public double range() {
 		return (rangesensor.getVoltage() / rangescaleval) / 25.4;
 	}
+
+	public char getAutonomousOption() {
+		display(6,"AUTONOMOUS SELECTION", autoSelected);
+		return (autoSelected != null && autoSelected.length() > 0 ? autoSelected.toUpperCase().charAt(0) : 'C');
+	}
 	
-		
-	public void processButton(int b){
-		switch(b){
-		case 1:
-			break;
-		case 2:
-			break;
-		}
+	public void display(int textBoxNumber, String label, String val){
+		SmartDashboard.putString("DB/String " + textBoxNumber, label + ": " + val);
+	}
+	
+	public void display(int textBoxNumber, String label, double val){
+		SmartDashboard.putString("DB/String " + textBoxNumber, label + ": " + Double.toString(val));
+	}
+
+	public void displayValues(){
 		
 	}
 	
 	
+	public void wait(int milliseconds) {
+		try {
+			Thread.sleep(250);
+		}
+		catch(InterruptedException e){}
+	}
 	
+	public void drive(double magnitude, double curve) {
+		double safeFriction = friction > 1.0 || friction < 0 ? 0.0 : friction;
+		double newMagnitude = magnitude == 0 ? 0.0 : ((1.0 - safeFriction) * magnitude) + friction;
+		myRobot.drive(newMagnitude, curve);
+	}
 	
 	@Override
 	public void robotInit() {
@@ -140,8 +160,10 @@ public class Robot extends IterativeRobot {
 
 		//you want to set the robot's state to the automated driving at autonomous init
 		currentState = driveState;
+		
 		timer.reset();
 		timer.start();
+		currentState.StateProcess();
 	}
 
 	/**
@@ -149,20 +171,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
-		while (timer.get() < 15){
-			currentState.StateProcess();
-
+		display(3, "STATE", currentState.GetState());
+		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
+		if (timer.get() >= 15){
+			enc.reset();
+			teleopInit();
+			//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
+			display(3, "STATE", currentState.GetState());
 		}
-		enc.reset();
-		teleopInit();
-		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 	}
 
+	@Override
 	public void teleopInit(){
 		currentState = manualState;
+		mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
+		currentState.StateProcess();
 	}
 	
 	/**
@@ -171,32 +196,36 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		//I think that the state process should go here
-		mySolenoid.set(DoubleSolenoid.Value.kReverse);
-		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
-		currentState.StateProcess();
+		display(3, "STATE", currentState.GetState());
+		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 	}
 
+	@Override
+	public void testInit(){
+		currentState = driveState;
+		currentState.StateProcess();
+	}
+	
 	/**
 	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
 		//I think that the state process should go here
-		currentState = driveState;
-		SmartDashboard.putString("DB/String 3", " " + currentState.toString());
-		currentState.StateProcess();
+		display(3, "STATE", currentState.GetState());
+		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
 	}
 	
 	public void processButtons(){
 		// rope climb (A) and descend (B)
 		
 		while (stick.getRawButton(1)){
-				rope1.setSpeed(1);
-				rope2.setSpeed(1);
+			rope1.setSpeed(1);
+			rope2.setSpeed(1);
 		}
 		while (stick.getRawButton(2)){
-				rope1.setSpeed(-1);
-				rope2.setSpeed(-1);
+			rope1.setSpeed(-1);
+			rope2.setSpeed(-1);
 		}
 		while (stick.getRawButton(4)){
 			rope1.setSpeed(0);
@@ -217,18 +246,9 @@ public class Robot extends IterativeRobot {
 			else if (speedscale == 1){
 				speedscale = .25;
 			}
-			SmartDashboard.putString("DB/String 5", " " + speedscale);
-			try {
-				Thread.sleep(250);
-			}
-			catch(InterruptedException e){}
-
-		}
-		
-		// compressor power (Y)
-		if (stick.getRawButton(4)){
-			
-			
+			display(5, "SPEED_SCALE", speedscale);
+			//SmartDashboard.putString("DB/String 5", " " + speedscale);
+			wait(250);
 		}
 						
 		
@@ -252,8 +272,12 @@ public class Robot extends IterativeRobot {
 		if (val < 0.2 && val > -0.2){
 			return 0;
 		}
-		else
-			return val / (1/speedscale);
+		else {
+			double safeFriction = friction > 1.0 || friction < 0 ? 0.0 : friction;
+			double newScale = speedscale == 0 ? 0.0 : ((1.0 - safeFriction) * speedscale);
+
+			return val / (1/newScale);
+		}
 	}
 	
 	public void getSerial(){
