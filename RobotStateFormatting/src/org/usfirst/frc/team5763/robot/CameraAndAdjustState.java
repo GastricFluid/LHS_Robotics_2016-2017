@@ -29,4 +29,8 @@ public class CameraAndAdjustState implements RobotInterface {
 	public void ToCameraAndAdjustState(){
 		robot.currentState = robot.cameraState;
 	}
+
+	public String GetState() {
+		return "CAMERA";
+	}
 }

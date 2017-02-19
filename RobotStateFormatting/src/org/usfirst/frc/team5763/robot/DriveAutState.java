@@ -12,33 +12,24 @@ public class DriveAutState implements RobotInterface {
 		
 	}
 	
-	public void StateProcess(){
+	public void StateProcess() {
 		//this process will include the code that moves the robot towards a certain vector/destination
 		//Switches to Manual State at 15 second (when automated phase ends)
 		//Switches to CameraAndAdjust when a signal is given that it is near the reflective tape
-		SmartDashboard.putString("DB/String 0", " " + robot.range());
-		robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
-		try {
-			Thread.sleep(250);
+		switch(robot.getAutonomousOption()) {
+			case 'C': 
+				Center();
+				break;
+			case 'L': 
+				Left();
+				break;
+			case 'R': 
+				Right();
+				break;
+			default: 
+				Center();
+				break;
 		}
-		catch(InterruptedException e){}
-		while (robot.range() > 40){
-			robot.myRobot.drive(.25, 0.0);
-			SmartDashboard.putString("DB/String 1", " " + robot.range());
-		}
-		while (robot.range() > 25){
-			robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
-			robot.myRobot.drive(.15, 0.0);
-			SmartDashboard.putString("DB/String 2", " " + robot.range());
-		}
-		
-		robot.myRobot.drive(0.0, 0.0);
-		robot.enc.reset();
-		while (robot.enc.get() < 10 || robot.timer.get() < 15){
-			robot.myRobot.drive(.15, 0.0);
-			SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
-		}
-		robot.myRobot.drive(0.0, 0.0);
 	}
 	
 	public void ToDriveAutState(){
@@ -66,4 +57,88 @@ public class DriveAutState implements RobotInterface {
 			robot.teleopInit();
 		}
 	}
+
+	public String GetState() {
+		return "AUTONOMOUS";
+	}
+	
+	private void Center() {
+		robot.display(0, "INITIAL DISTANCE", robot.range());
+		//SmartDashboard.putString("DB/String 0", " " + robot.range());
+		robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
+		robot.wait(250);
+		while (robot.range() > 40){
+			robot.drive(.25, 0.0);
+			robot.display(1, "MOVING DISTANCE", robot.range());
+			//SmartDashboard.putString("DB/String 1", " " + robot.range());
+		}
+		while (robot.range() > 25){
+			robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
+			robot.drive(.15, 0.0);
+			robot.display(2, "FINAL DISTANCE", robot.range());
+			//SmartDashboard.putString("DB/String 2", " " + robot.range());
+		}
+		
+		robot.drive(0.0, 0.0);
+		robot.enc.reset();
+		while (robot.enc.get() < 10 || robot.timer.get() < 15){
+			robot.drive(.15, 0.0);
+			robot.display(2, "ENCODER", robot.enc.get());
+			//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
+		}
+		robot.drive(0.0, 0.0);
+	}
+	
+	private void Left() {
+		robot.display(0, "INITIAL DISTANCE", robot.range());
+		//SmartDashboard.putString("DB/String 0", " " + robot.range());
+		robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
+		robot.wait(250);
+		while (robot.range() > 40){
+			robot.drive(.25, 0.0);
+			robot.display(1, "MOVING DISTANCE", robot.range());
+			//SmartDashboard.putString("DB/String 1", " " + robot.range());
+		}
+		while (robot.range() > 25){
+			robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
+			robot.drive(.15, 0.0);
+			robot.display(2, "FINAL DISTANCE", robot.range());
+			//SmartDashboard.putString("DB/String 2", " " + robot.range());
+		}
+		
+		robot.drive(0.0, 0.0);
+		robot.enc.reset();
+		while (robot.enc.get() < 10 || robot.timer.get() < 15){
+			robot.drive(.15, 0.0);
+			robot.display(2, "ENCODER", robot.enc.get());
+			//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
+		}
+		robot.drive(0.0, 0.0);
+	}
+	
+	private void Right() {robot.display(0, "INITIAL DISTANCE", robot.range());
+	//SmartDashboard.putString("DB/String 0", " " + robot.range());
+	robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
+	robot.wait(250);
+	while (robot.range() > 40){
+		robot.drive(.25, 0.0);
+		robot.display(1, "MOVING DISTANCE", robot.range());
+		//SmartDashboard.putString("DB/String 1", " " + robot.range());
+	}
+	while (robot.range() > 25){
+		robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
+		robot.drive(.15, 0.0);
+		robot.display(2, "FINAL DISTANCE", robot.range());
+		//SmartDashboard.putString("DB/String 2", " " + robot.range());
+	}
+	
+	robot.drive(0.0, 0.0);
+	robot.enc.reset();
+	while (robot.enc.get() < 10 || robot.timer.get() < 15){
+		robot.drive(.15, 0.0);
+		robot.display(2, "ENCODER", robot.enc.get());
+		//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
+	}
+	robot.drive(0.0, 0.0);}
+	
 }

@@ -28,4 +28,8 @@ public class StopState implements RobotInterface {
 	public void ToCameraAndAdjustState(){
 		robot.currentState = robot.cameraState;
 	}
+
+	public String GetState() {
+		return "STOP";
+	}
 }
