@@ -70,8 +70,9 @@ public class Robot extends IterativeRobot {
 	byte[] serstring;
 	
 	
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
+	final String defaultAuto = "Center";
+	final String rightAuto = "Right";
+	final String leftAuto = "Left";
 
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
@@ -121,8 +122,9 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
+		chooser.addDefault("Center", defaultAuto);
+		chooser.addObject("Right", rightAuto);
+		chooser.addObject("Left", leftAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		
@@ -187,7 +189,6 @@ public class Robot extends IterativeRobot {
 		mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontRight, Boolean.TRUE);
 		myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
-		currentState.StateProcess();
 	}
 	
 	/**
@@ -198,12 +199,12 @@ public class Robot extends IterativeRobot {
 		//I think that the state process should go here
 		display(3, "STATE", currentState.GetState());
 		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
+		currentState.StateProcess();
 	}
 
 	@Override
 	public void testInit(){
 		currentState = driveState;
-		currentState.StateProcess();
 	}
 	
 	/**
@@ -214,6 +215,7 @@ public class Robot extends IterativeRobot {
 		//I think that the state process should go here
 		display(3, "STATE", currentState.GetState());
 		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
+		currentState.StateProcess();
 	}
 	
 	public void processButtons(){
