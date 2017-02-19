@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
 	double phi = 0;
 	double speedscale = 1;
 	
-	double friction = .6;
+	double friction = .2;
 	
 	byte[] serstring;
 	
