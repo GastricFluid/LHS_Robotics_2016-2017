@@ -3,6 +3,7 @@ package org.usfirst.frc.team5763.robot;
 public class ManualState implements RobotInterface {
 
 	private Robot robot;
+	private double x_acc, y_acc;
 	
 	public ManualState(Robot currentState){
 		robot = currentState;
@@ -13,7 +14,21 @@ public class ManualState implements RobotInterface {
 		//Switches to DriveAutState on Button input
 		//Switches to CameraAndAdjustState on Button input
 		//Switches to StopState on Button input
-		robot.myRobot.mecanumDrive_Cartesian(robot.getaxis(4),robot.getaxis(1),-1*robot.getaxis(2) + robot.getaxis(3),0);
+		//robot.myRobot.mecanumDrive_Cartesian(robot.getaxis(0),robot.getaxis(1),-1*robot.getaxis(5) + robot.getaxis(4),0);
+		
+//		x_acc = robot.myAccel.getX();
+//		y_acc = robot.myAccel.getY();
+//		
+//		robot.display(7, "x acc ", x_acc);
+//		robot.display(8, "y acc", y_acc);
+		
+		robot.myRobot.mecanumDrive_Cartesian(robot.getaxis(0),robot.getaxis(1),robot.getaxis(4),robot.myGyro.getAngle());
+//		robot.myRobot.mecanumDrive_Cartesian(0,0,0,0);
+//		if (robot.getaxis(0) == 0 && robot.getaxis(1) == 0 && robot.getaxis(4) == 0 && (Math.abs(x_acc) > 0.01 || Math.abs(y_acc) > 0.01))
+//		{
+//			robot.myRobot.mecanumDrive_Cartesian(0,0,0,0);
+//		}
+		
 		robot.processButtons();		
 	}
 	

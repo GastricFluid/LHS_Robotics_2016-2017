@@ -67,13 +67,13 @@ public class DriveAutState implements RobotInterface {
 		//SmartDashboard.putString("DB/String 0", " " + robot.range());
 		robot.mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		robot.wait(250);
-		while (robot.range() > 40){
+		while (robot.range() > 45){
 			robot.drive(.25, 0.0);
 			robot.display(1, "MOVING DISTANCE", robot.range());
 			//SmartDashboard.putString("DB/String 1", " " + robot.range());
 		}
+		robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
 		while (robot.range() > 25){
-			robot.mySolenoid.set(DoubleSolenoid.Value.kForward);
 			robot.drive(.15, 0.0);
 			robot.display(2, "FINAL DISTANCE", robot.range());
 			//SmartDashboard.putString("DB/String 2", " " + robot.range());
@@ -83,7 +83,7 @@ public class DriveAutState implements RobotInterface {
 		robot.enc.reset();
 		while (robot.enc.get() < 10 || robot.timer.get() < 15){
 			robot.drive(.15, 0.0);
-			robot.display(2, "ENCODER", robot.enc.get());
+			robot.display(4, "ENCODER", robot.enc.get());
 			//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
 		}
 		robot.drive(0.0, 0.0);
@@ -110,7 +110,7 @@ public class DriveAutState implements RobotInterface {
 		robot.enc.reset();
 		while (robot.enc.get() < 10 || robot.timer.get() < 15){
 			robot.drive(.15, 0.0);
-			robot.display(2, "ENCODER", robot.enc.get());
+			robot.display(4, "ENCODER", robot.enc.get());
 			//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
 		}
 		robot.drive(0.0, 0.0);
@@ -136,7 +136,7 @@ public class DriveAutState implements RobotInterface {
 	robot.enc.reset();
 	while (robot.enc.get() < 10 || robot.timer.get() < 15){
 		robot.drive(.15, 0.0);
-		robot.display(2, "ENCODER", robot.enc.get());
+		robot.display(4, "ENCODER", robot.enc.get());
 		//SmartDashboard.putString("DB/String 4", " " + robot.enc.get());
 	}
 	robot.drive(0.0, 0.0);}

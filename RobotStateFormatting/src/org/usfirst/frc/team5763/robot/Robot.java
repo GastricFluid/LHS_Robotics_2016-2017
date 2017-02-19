@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5763.robot;
 
+import java.util.Set;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -45,6 +48,9 @@ public class Robot extends IterativeRobot {
 	public SerialPort myPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 	public ADXRS450_Gyro myGyro = new ADXRS450_Gyro();
 	public Accelerometer myAccel = new BuiltInAccelerometer();
+	SmartDashboard dashboard = new SmartDashboard();
+	String[] autoModes = {"CENTER", "LEFT", "RIGHT"};
+	
 	
 	
 	// axis offset vars
@@ -65,17 +71,12 @@ public class Robot extends IterativeRobot {
 	double phi = 0;
 	double speedscale = 1;
 	
-	double friction = .2;
+	double friction = 0;
 	
 	byte[] serstring;
 	
 	
-	final String defaultAuto = "Center";
-	final String rightAuto = "Right";
-	final String leftAuto = "Left";
-
 	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
 	
 	public RobotInterface currentState;
 	public ManualState manualState;
@@ -90,7 +91,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	public char getAutonomousOption() {
-		display(6,"AUTONOMOUS SELECTION", autoSelected);
+		display(6,"SELECTION", autoSelected);
 		return (autoSelected != null && autoSelected.length() > 0 ? autoSelected.toUpperCase().charAt(0) : 'C');
 	}
 	
@@ -100,12 +101,7 @@ public class Robot extends IterativeRobot {
 	
 	public void display(int textBoxNumber, String label, double val){
 		SmartDashboard.putString("DB/String " + textBoxNumber, label + ": " + Double.toString(val));
-	}
-
-	public void displayValues(){
-		
-	}
-	
+	}	
 	
 	public void wait(int milliseconds) {
 		try {
@@ -122,10 +118,9 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Center", defaultAuto);
-		chooser.addObject("Right", rightAuto);
-		chooser.addObject("Left", leftAuto);
-		SmartDashboard.putData("Auto choices", chooser);
+	     dashboard.putStringArray("Auto List", autoModes);	
+		//SmartDashboard.putStringArray("Auto List", new String[]{"Center","Left","Right"});
+		//SmartDashboard.putData("Auto Selector", chooser);
 		mySolenoid.set(DoubleSolenoid.Value.kReverse);
 		
 		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
@@ -134,7 +129,7 @@ public class Robot extends IterativeRobot {
 		//myRobot.setInvertedMotor(RobotDrive.MotorType.kRearRight, Boolean.TRUE);
 		myGyro.calibrate();
 		
-		//may or may not be necicarry to set the states up like this (aka I did it in C# but doesn't seem needed in java)
+		//may or may not be necessary to set the states up like this (aka I did it in C# but doesn't seem needed in java)
 		manualState = new ManualState(this);
 		driveState = new DriveAutState(this);
 		cameraState = new CameraAndAdjustState(this);
@@ -145,7 +140,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
+		autoSelected = dashboard.getString("Auto Selector");
 		
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
@@ -166,6 +161,7 @@ public class Robot extends IterativeRobot {
 		timer.reset();
 		timer.start();
 		currentState.StateProcess();
+		display(3, "STATE", currentState.GetState());
 	}
 
 	/**
@@ -197,14 +193,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		//I think that the state process should go here
+		currentState.StateProcess();
 		display(3, "STATE", currentState.GetState());
 		//SmartDashboard.putString("DB/String 3", " " + currentState.toString());
-		currentState.StateProcess();
 	}
 
 	@Override
 	public void testInit(){
-		currentState = driveState;
+		currentState = manualState;
 	}
 	
 	/**
@@ -236,17 +232,14 @@ public class Robot extends IterativeRobot {
 	
 		// speed select (X)
 		if (stick.getRawButton(3)){
-			if (speedscale == 0.25){
-				speedscale = 0.5;
-			}
-			else if (speedscale == 0.5){
+			if (speedscale == 0.5){
 				speedscale = 0.75;
 			}
 			else if (speedscale == 0.75){
 				speedscale = 1.0;
 			}
 			else if (speedscale == 1){
-				speedscale = .25;
+				speedscale = .50;
 			}
 			display(5, "SPEED_SCALE", speedscale);
 			//SmartDashboard.putString("DB/String 5", " " + speedscale);
@@ -255,11 +248,14 @@ public class Robot extends IterativeRobot {
 						
 		
 		// gear piston Lbump and Rbump
-		if (stick.getRawButton(5)){
+		if (stick.getRawAxis(2) > .5){
 			mySolenoid.set(DoubleSolenoid.Value.kReverse);				
 		}
-		if (stick.getRawButton(6)){
+		if (stick.getRawAxis(3) > .5){
 			mySolenoid.set(DoubleSolenoid.Value.kForward);				
+		}
+		if (stick.getRawButton(7)){
+			myGyro.calibrate();
 		}
 		
 	}
@@ -275,10 +271,10 @@ public class Robot extends IterativeRobot {
 			return 0;
 		}
 		else {
-			double safeFriction = friction > 1.0 || friction < 0 ? 0.0 : friction;
-			double newScale = speedscale == 0 ? 0.0 : ((1.0 - safeFriction) * speedscale);
+			//double safeFriction = friction > 1.0 || friction < 0 ? 0.0 : friction;
+			//double newScale = speedscale == 0 ? 0.0 : ((1.0 - safeFriction) * speedscale);
 
-			return val / (1/newScale);
+			return val / (1/speedscale);
 		}
 	}
 	
